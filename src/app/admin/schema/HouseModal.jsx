@@ -257,9 +257,10 @@ const HouseFormModal = ({ open, onClose }) => {
               variant="outlined"
               sx={{ marginBottom: 2 }}
             >
-              <MenuItem value="1BHK">Furnished</MenuItem>
-              <MenuItem value="2BHK">Unfurnished</MenuItem>
-              <MenuItem value="3BHK">Partially Furnished</MenuItem>
+              <MenuItem value="1BHK">1BHK</MenuItem>
+              <MenuItem value="2BHK">2BHK</MenuItem>
+              <MenuItem value="3BHK">3BHK</MenuItem>
+              <MenuItem value="1RK">1RK</MenuItem>
             </Select>
           </FormControl>
 
