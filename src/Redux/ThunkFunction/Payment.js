@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { fetchNotifications } from "./Notification";
 
 export const purchaseHouse = createAsyncThunk(
   'payment/PurchaseHouse',
@@ -41,12 +42,17 @@ export const purchaseHouse = createAsyncThunk(
         
         // If the request was successful, show success message and return the data
         toast.success(response.data.message || "Purchase Successful");
+        await thunkApi.dispatch(fetchNotifications())
+        const audio = new Audio('/notify.mp3');
+        audio.play();
+
         return thunkApi.fulfillWithValue(response.data);
 
     } catch (err) {
         // Log the error and display the error message in the toast
         console.error("Error:", err);
         const errorMessage = err.response?.data?.message || 'Purchase failed';
+        
         toast.error(errorMessage);  // Display backend error in toast
         return thunkApi.rejectWithValue(errorMessage);
     }
