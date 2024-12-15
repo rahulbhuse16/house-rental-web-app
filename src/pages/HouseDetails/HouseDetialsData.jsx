@@ -41,15 +41,39 @@ const HouseDetialsData = ({ data }) => {
   const dispatch = useDispatch();
   const getGeoLocation = async (address) => {
     if (!address) return;
-    const location = await fetch(
-      `https://geocode.maps.co/search?q=${address}&api_key=663b44d896c33232676348foufd2cf9`
-    );
-    const data = await location.json();
-    setLocation({
-      lat: data[0].lat,
-      lng: data[0].lon,
-    });
+  
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`
+      );
+  
+      if (!response.ok) {
+        console.error("Failed to fetch location data. Status:", response.status);
+        return;
+      }
+  
+      const data = await response.json();
+      console.log("Geocoding Response:", data);
+  
+      if (data.length === 0) {
+        console.error("No results found for the address:", address);
+        return;
+      }
+  
+      // Extract latitude and longitude from the first result
+      const { lat, lon } = data[0];
+      setLocation({
+        lat: parseFloat(lat),
+        lng: parseFloat(lon),
+      });
+  
+      console.log("Location set:", { lat, lon });
+    } catch (error) {
+      console.error("Error fetching geolocation data:", error);
+    }
   };
+  
+  
   const role=localStorage.getItem('role')
 
   useEffect(()=>{

@@ -38,8 +38,8 @@ const HouseFormModal = ({ open, onClose }) => {
         (error) => {
           console.error("Error fetching location: ", error);
           // Fallback to default center if location is not available
-          setUserLocation({ lat: 37.7749, lng: -122.4194 }); // Default to San Francisco
-          setMarkerPosition([37.7749, -122.4194]);
+          setUserLocation({ lat: 19.8849, lng: 74.4728 }); // Default to San Francisco
+          setMarkerPosition([19.8849, 74.4728]);
         }
       );
     } else {
