@@ -8,7 +8,8 @@ const Logo = ({ isDark = false }) => {
         "text-gray-900": isDark,
       })}
     >
-      <Link to="/">HomeGRW</Link>
+      <Link to="/">
+      HomeHub</Link>
     </h1>
   );
 };

@@ -116,7 +116,7 @@ const Dashboard = () => {
             </ListItemIcon>
             <ListItemText sx={{ color: "#2b0057" }} primary="Profile" />
           </ListItem>
-          <ListItem sx={{ backgroundColor: "#F3E6F4", marginTop: 0.4, borderRadius: 2 }} button onClick={handleUserLogout}>
+          <ListItem sx={{ backgroundColor: "#F3E6F4", marginTop: 0.4, borderRadius: 2 }} button component={Link} to={'/chat'}>
             <ListItemIcon>
               <ChatIcon sx={{ color: "#2b0057" }} />
             </ListItemIcon>

@@ -17,7 +17,8 @@ export const createHouse = createAsyncThunk(
     userId,
     images,
     houseType,
-    token
+    token,
+    mobileNumber
   }, thunkApi) => {
     try {
         console.log("calling")
@@ -37,7 +38,8 @@ export const createHouse = createAsyncThunk(
                 description,
                 userId,
                 images,
-                houseType
+                houseType,
+                mobileNumber
             },
             {
                 headers: {
@@ -111,7 +113,8 @@ export const fetchHouseDetails=createAsyncThunk('houseDetail/fetchHouse', async 
         houseArea:response.data.house.houseArea,
         description:response.data.house.description,
         images:response.data.house.images,
-        houseStatus:response.data.houseStatus
+        houseStatus:response.data.houseStatus,
+        mobileNumber:response.data.mobileNumber
       });
 
   } catch (err) {

@@ -22,6 +22,7 @@ const HouseFormModal = ({ open, onClose }) => {
     description: '',
     dropdownOption: '',
     images: [],
+    mobileNumber:''
   });
 
   const [markerPosition, setMarkerPosition] = useState(null); // Initial marker position
@@ -113,7 +114,7 @@ const HouseFormModal = ({ open, onClose }) => {
       // Validate the form data
       if (!formData.houseName || !formData.address || !formData.sellerName ||
           !formData.rentalOfferPrice || !formData.rentalOriginalPrice ||
-          !formData.houseArea || !formData.description || !formData.images) {
+          !formData.houseArea || !formData.description || !formData.images || !formData.mobileNumber) {
         return;
       }
     
@@ -130,7 +131,9 @@ const HouseFormModal = ({ open, onClose }) => {
         userId: userId,
         images: formData.images,
         token: token,
-        houseType: formData.houseDropDown, // Use the dropdown value here
+        houseType: formData.houseDropDown,
+        mobileNumber:formData.mobileNumber
+         // Use the dropdown value here
       }))
       .unwrap()
       .then((response) => {
@@ -196,6 +199,7 @@ const HouseFormModal = ({ open, onClose }) => {
             variant="outlined"
             sx={{ marginBottom: 2 }}
           />
+           
           <TextField
             fullWidth
             margin="normal"
@@ -203,6 +207,16 @@ const HouseFormModal = ({ open, onClose }) => {
             name="sellerName"
             value={formData.sellerName}
             onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
+            variant="outlined"
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Mobile Number"
+            name="mobileNumber"
+            value={formData.mobileNumber}
+            onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
             variant="outlined"
             sx={{ marginBottom: 2 }}
           />

@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHouseDetails } from "@/Redux/ThunkFunction/HouseList";
+import Chat from "../Chat/Chat";
 
 const HouseDetialsData = ({ data }) => {
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
@@ -132,7 +133,7 @@ const HouseDetialsData = ({ data }) => {
             })}
             onClick={() => setActiveSection("location")}
           >
-            Property Location
+            Property Location 
           </Button>
         </div>
 
@@ -192,7 +193,8 @@ const HouseDetialsData = ({ data }) => {
             <BellRing />
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium leading-none">
-                {data?.sellerName}
+                {data?.sellerName} 
+               
               </p>
               <p className="text-sm text-muted-foreground">Seller</p>
             </div>
@@ -204,10 +206,11 @@ const HouseDetialsData = ({ data }) => {
             className="w-full"
             to={`/house/${params.id}/payment`}
           >
-            Buy the house
+            Buy the house 
           </NavigationButton>
         </CardFooter>
       </Card>)}
+     
     </div>
   );
 };

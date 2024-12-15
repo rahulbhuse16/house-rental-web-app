@@ -15,7 +15,8 @@ const initialState={
         images:[],
         isLoading:false,
         hasError:false,
-        houseStatus:''
+        houseStatus:'',
+        mobileNumber:''
     }
 }
 const houseDetail=createSlice({
@@ -49,7 +50,8 @@ const houseDetail=createSlice({
             state.houseDetailState.rentalOfferPrice=action.payload?.rentalOfferPrice;
             state.houseDetailState.rentalOriginalPrice=action.payload?.rentalOriginalPrice;
             state.houseDetailState.sellerName=action.payload?.sellerName;
-            state.houseDetailState.houseStatus=action.payload.houseStatus
+            state.houseDetailState.houseStatus=action.payload.houseStatus;
+            state.houseDetailState.mobileNumber=action.payload.mobileNumber
 
 
         })

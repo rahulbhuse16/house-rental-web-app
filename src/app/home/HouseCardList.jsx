@@ -4,6 +4,7 @@ import HouseCardSkeleton from "./HouseCardSkeleton";
 import { useEffect } from "react";
 import { fetchHouseList } from "@/Redux/ThunkFunction/HouseList"
 import { useSelector,useDispatch } from "react-redux";
+import Chat from "@/pages/Chat/Chat";
 
 const HouseCardList = ({ limit = 0 }) => {
  /* const { isPending, error, data } = useQuery({
@@ -55,6 +56,7 @@ const HouseCardList = ({ limit = 0 }) => {
             />
             </div>
           ))}
+          
     </div>
   );
 };

@@ -24,6 +24,7 @@ import NotiFication from "./pages/NotiFications/Notification";
 import PaymentHistory from "./pages/PaymentHistory/PaymentHistory";
 import ChartsPage from "./pages/Charts/Statistics";
 import ProfilePage from "./pages/Profile/Profile";
+import Chat from "./pages/Chat/Chat";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +99,10 @@ const router = createBrowserRouter([
       {
         path:"profile/:id",
         element:<ProfilePage/>
+      },
+      {
+        path:"chat",
+        element:<Chat/>
       }
     ],
   },
