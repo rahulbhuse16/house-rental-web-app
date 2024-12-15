@@ -4,7 +4,7 @@ import SectionHeading from "@/components/SectionHeading";
 const Features = () => {
   return (
     <section className="py-6 space-y-6">
-      <SectionHeading>Feature House</SectionHeading>
+      <SectionHeading>Recently Sold Houses</SectionHeading>
       <HouseCardList limit={3} />
     </section>
   );

@@ -189,7 +189,7 @@ const HouseFormModal = ({ open, onClose }) => {
           <TextField
             fullWidth
             margin="normal"
-            label="Rental Original Price"
+            label="Sell Offer Price"
             name="rentalOriginalPrice"
             value={formData.rentalOriginalPrice}
             onChange={(e) => setFormData({ ...formData, rentalOriginalPrice: e.target.value })}

@@ -61,6 +61,8 @@ const Dashboard = () => {
     }
   }, [pathname]); // Only run when the pathname changes
 
+  const role= localStorage.getItem('role')
+
   return (
     <div className="dashboard">
       <CssBaseline />
@@ -70,7 +72,7 @@ const Dashboard = () => {
             <MenuIcon />
           </IconButton>
           <SectionHeading className="text-2xl sm:text-3xl sm:text-left">
-            {authState.role === "admin" ? "Admin Dashboard" : ""}
+            {role === "admin" ? "Admin Dashboard" : "User Dashboard"}
           </SectionHeading>
           <Button size="icon" onClick={handleUserLogout} style={{ marginLeft: "auto" }}>
             <LogoutIcon />
@@ -133,7 +135,7 @@ const Dashboard = () => {
       <main className="content" style={{ marginTop: "80px", padding: "20px" }}>
         <NotiFication />
         <div className="flex justify-center w-full mb-10">
-          {authState.role === "admin" && (
+          {localStorage.getItem('role')==='admin' && (
             <Button className="flex items-center" onClick={() => setOpen(true)}>
               <FaPlus className="-mb-0.5 w-4 h-4" />
               <span className="ml-2">Add New House</span>

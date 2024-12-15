@@ -13,8 +13,9 @@ const PaymentHistory = () => {
     const { userId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { payments = [], isLoading } = useSelector((state) => state.Payment);
-    const isPending = useSelector(state => state.Payment.isLoading)
+    const {  payments = [], isLoading } = useSelector((state) => state.Payment);
+    const isPending = useSelector(state => state.Payment.isLoading);
+    const role=localStorage.getItem('role')
     useEffect(() => {
         dispatch(fetchPayments({ userId }));
     }, []);
@@ -112,7 +113,8 @@ const downloadReceipt = (payment) => {
                         style={{ cursor: "pointer", marginRight: 10 }}
                     />
                     <h1 className="text-4xl font-semibold text-gray-800">
-                        Payment History
+                        {role==='admin'? 'Payments Collected':'Payment History'}
+                        
                     </h1>
                 </div>
 
@@ -136,9 +138,12 @@ const downloadReceipt = (payment) => {
                             <th className="py-3 px-4 text-left">Expiry Date</th>
                             <th className="py-3 px-4 text-left">CVC</th>
                             <th className="py-3 px-4 text-left">Amount ($)</th>
+                            {role==='user'?
+                            (<React.Fragment>
                             <th className="py-3 px-4 text-left">Username</th>
                             <th className="py-3 px-4 text-left">House Name</th>
                             <th className="py-3 px-4 text-left">Address</th>
+                            </React.Fragment>):null}
                             <th className="py-3 px-4 text-left">Payment Date</th>
                             <th className="py-3 px-4 text-left">Get Receipt</th>
                         </tr>
@@ -162,10 +167,12 @@ const downloadReceipt = (payment) => {
                                     <td className="py-2 px-4">{payment.expiryDate}</td>
                                     <td className="py-2 px-4">{payment.cvc}</td>
                                     <td className="py-2 px-4">{payment.totalAmount}</td>
-                                    <td className="py-2 px-4">{payment.User.username}</td>
-                                    <td className="py-2 px-4">{payment.House.houseName}</td>
-                                    <td className="py-2 px-4">{payment.House.address}</td>
-
+                                    {role==='user' ?
+                                    (<React.Fragment>
+                                    <td className="py-2 px-4">{payment?.User?.username}</td>
+                                    <td className="py-2 px-4">{payment?.House?.houseName}</td>
+                                    <td className="py-2 px-4">{payment?.House?.address}</td>
+                                    </React.Fragment>):null}
                                     <td className="py-2 px-4">
                                         {new Date(payment.updatedAt).toLocaleDateString('en-GB', {
                                             year: 'numeric',

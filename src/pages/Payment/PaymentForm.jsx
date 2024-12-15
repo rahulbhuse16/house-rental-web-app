@@ -27,12 +27,13 @@ const formSchema = z.object({
 const PaymentForm = ({ price, houseId }) => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth.authState);
+  const email=localStorage.getItem('email')
   const params=useParams()
   const navigate=useNavigate()
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: email,
       cardHolder: "",
       cardDetails: "",
       expiryDate: "",
@@ -72,7 +73,7 @@ const PaymentForm = ({ price, houseId }) => {
         console.error("Error:", error);
       });
   }
-
+  console.log("email",email)
   return (
     <Form  {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -88,7 +89,9 @@ const PaymentForm = ({ price, houseId }) => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="sara@gmail.com" {...field} />
+                    <Input
+                      
+                     placeholder="sara@gmail.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

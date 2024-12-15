@@ -8,30 +8,31 @@ import SectionHeading from "@/components/SectionHeading";
 const cardData = [
   {
     id: 1,
-    title: "Potential Earning",
-    desc: "Get an offer for your home within 24 hours. No obligations, no hidden fees.",
+    title: "List Your Property",
+    desc: "Easily add your rental property to our platform and reach potential tenants in minutes.",
   },
   {
     id: 2,
-    title: "Potential Earning",
-    desc: "Get an offer for your home within 24 hours. No obligations, no hidden fees.",
+    title: "Tenant Screening",
+    desc: "Get detailed tenant background checks, including credit and rental history reports.",
   },
   {
     id: 3,
-    title: "Potential Earning",
-    desc: "Get an offer for your home within 24 hours. No obligations, no hidden fees.",
+    title: "Rental Insights",
+    desc: "Access market trends and pricing insights to maximize your rental income.",
   },
   {
     id: 4,
-    title: "Potential Earning",
-    desc: "Get an offer for your home within 24 hours. No obligations, no hidden fees.",
+    title: "Maintenance Requests",
+    desc: "Streamline maintenance management by tracking and resolving tenant issues efficiently.",
   },
   {
     id: 5,
-    title: "Potential Earning",
-    desc: "Get an offer for your home within 24 hours. No obligations, no hidden fees.",
+    title: "Secure Payments",
+    desc: "Simplify rent collection with automated payment tracking and reminders.",
   },
 ];
+
 const CardPage = () => {
   const componentRef = useRef(null);
   const isInViewport = useIsInViewport(componentRef);

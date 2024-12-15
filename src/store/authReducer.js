@@ -46,12 +46,15 @@ const authInfo = createSlice({
         builder.addCase(login.fulfilled, (state, action) => {
             console.log("succes",action.payload)
             state.authState.isVerified = true;
-            localStorage.setItem('role',action.payload.role)
+            localStorage.setItem('role',action.payload.userRole)
             state.authState.token = action.payload.token;
             localStorage.setItem('token',action.payload.token)
             state.authState.role = action.payload.userRole;
             state.authState.id=action.payload.id;
-            localStorage.setItem('id',action.payload.id)
+            localStorage.setItem('id',action.payload.id);
+            console.log("payload",action.payload)
+            localStorage.setItem('email',action.payload.email);
+            state.authState.email=action.payload.email
 
         })
         builder.addCase(login.rejected, (state, action) => {
