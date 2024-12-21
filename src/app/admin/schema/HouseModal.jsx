@@ -1,34 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Box, Button, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { Modal, Button, Form, Input, Select, Upload, Typography, message } from 'antd';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import axios from 'axios';
-import { useDropzone } from 'react-dropzone';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createHouse } from '@/Redux/ThunkFunction/HouseList';
-const HouseFormModal = ({ open, onClose }) => {
-    const dispatch=useDispatch()
+import axios from 'axios';
 
-  const userId = useSelector(state => state.auth.authState.id);
-  const token = useSelector(state => state.auth.authState.token);
+const { Option } = Select;
+const { TextArea } = Input;
+
+const HouseFormModal = ({ open, onClose }) => {
+  const dispatch = useDispatch();
+
+  const userId = useSelector((state) => state.auth.authState.id);
+  const token = useSelector((state) => state.auth.authState.token);
+
   const [formData, setFormData] = useState({
     houseName: '',
     address: '',
-    rentalOfferPrice: '',
     rentalOriginalPrice: '',
     sellerName: '',
     houseDropDown: '',
     houseArea: '',
     description: '',
     dropdownOption: '',
+    purchaseCategory: '',
     images: [],
-    mobileNumber:''
+    mobileNumber: '',
   });
 
-  const [markerPosition, setMarkerPosition] = useState(null); // Initial marker position
-  const [userLocation, setUserLocation] = useState(null); // User's live location
+  const [markerPosition, setMarkerPosition] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+
+  // Fetch user's current location using geolocation API
   useEffect(() => {
-    // Get the user's live location on component mount
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -37,21 +42,20 @@ const HouseFormModal = ({ open, onClose }) => {
           setMarkerPosition([latitude, longitude]);
         },
         (error) => {
-          console.error("Error fetching location: ", error);
-          // Fallback to default center if location is not available
-          setUserLocation({ lat: 19.8849, lng: 74.4728 }); // Default to San Francisco
+          console.error('Error fetching location: ', error);
+          setUserLocation({ lat: 19.8849, lng: 74.4728 }); // Default coordinates
           setMarkerPosition([19.8849, 74.4728]);
         }
       );
     } else {
-      console.log("Geolocation is not supported by this browser.");
-      // Fallback to default center if geolocation is not supported
-      setUserLocation({ lat: 37.7749, lng: -122.4194 }); // Default to San Francisco
+      console.log('Geolocation is not supported by this browser.');
+      setUserLocation({ lat: 37.7749, lng: -122.4194 });
       setMarkerPosition([37.7749, -122.4194]);
     }
   }, []);
 
-  // Handle map click to update marker and fetch address
+  // Handle map click event and fetch address
+
   const MapClickHandler = () => {
     useMapEvents({
       click: (e) => {
@@ -77,53 +81,30 @@ const HouseFormModal = ({ open, onClose }) => {
 
     return null;
   };
+ 
+  // Handle form submission
+  const handleSubmit = () => {
+    if (
+      !formData.houseName ||
+      !formData.address ||
+      !formData.sellerName ||
+      !formData.purchaseCategory ||
+      !formData.rentalOriginalPrice ||
+      !formData.houseArea ||
+      !formData.description ||
+      !formData.images.length ||
+      !formData.mobileNumber
+    ) {
+      message.error('Please fill all required fields.');
+     // return;
+    }
 
-  // Image upload handler
-  const handleDrop = (acceptedFiles) => {
-    const imageData = acceptedFiles.map((file) => URL.createObjectURL(file));
-    setFormData({ ...formData, images: [...formData.images, ...imageData] });
-
-    // Optionally, send images to backend via API here
-    acceptedFiles.forEach((file) => {
-      const formData = new FormData();
-      formData.append('image', file);
-      axios.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        .then(response => {
-          console.log("Image uploaded successfully:", response.data);
-        })
-        .catch(error => {
-          console.error("Error uploading image:", error);
-        });
-    });
-  };
-
-  // Ensure useDropzone is always called outside of any conditionals
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: handleDrop,
-    accept: 'image/*',
-  });
-
-  if (!userLocation) {
-    return <div>Loading...</div>; // Show loading state until the location is fetched
-  }
-  
-
-  const handleSubmit = (e) => {
-      e.preventDefault();
-    
-      // Validate the form data
-      if (!formData.houseName || !formData.address || !formData.sellerName ||
-          !formData.rentalOfferPrice || !formData.rentalOriginalPrice ||
-          !formData.houseArea || !formData.description || !formData.images || !formData.mobileNumber) {
-        return;
-      }
-    
-      // Dispatch createHouse and handle the response
-      dispatch(createHouse({
+    dispatch(
+      createHouse({
         houseName: formData.houseName,
         address: formData.address,
         sellerName: formData.sellerName,
-        rentalOfferPrice: formData.rentalOfferPrice,
+        purchaseCategory:formData.purchaseCategory,
         rentalOriginalPrice: formData.rentalOriginalPrice,
         houseArea: formData.houseArea,
         FlatType: formData.dropdownOption,
@@ -132,172 +113,157 @@ const HouseFormModal = ({ open, onClose }) => {
         images: formData.images,
         token: token,
         houseType: formData.houseDropDown,
-        mobileNumber:formData.mobileNumber
-         // Use the dropdown value here
-      }))
+        purchaseCategory: formData.purchaseCategory,
+        mobileNumber: formData.mobileNumber,
+      })
+    )
       .unwrap()
-      .then((response) => {
-          navigate('/admin/dashboard'),
-          onClose()
-         
+      .then(() => {
+        message.success('House created successfully!');
+        onClose();
       })
       .catch((error) => {
-        console.error("Error creating house:", error);
+        console.error('Error creating house:', error);
+        message.error('Failed to create house.');
       });
+  };
+
+  // Handle image upload (get file URL locally)
+  const handleFileUpload = ({ file, onSuccess }) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, reader.result], // Adding image as data URL
+      }));
+      onSuccess(null, file);
+    };
+
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
+      message.error('Failed to read image.');
+    };
+
+    reader.readAsDataURL(file); // Convert image file to data URL
+  };
+
+  if (!userLocation) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>
-        <Typography variant="h5">House Rental Form</Typography>
-      </DialogTitle>
-      <DialogContent sx={{ padding: 3, maxHeight: '80vh', overflowY: 'auto' }}>
-        <form>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="House Name"
-            name="houseName"
+    <Modal open={open} onCancel={onClose} onOk={handleSubmit} title="House Rental Form" width={800}>
+      <Form layout="vertical">
+        <Form.Item label="House Name" required>
+          <Input
             value={formData.houseName}
             onChange={(e) => setFormData({ ...formData, houseName: e.target.value })}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Address"
-            name="address"
-            value={formData.address}
-            variant="outlined"
+        </Form.Item>
 
-            disabled
-            sx={{ marginBottom: 2 }}
-          />
-          <MapContainer center={userLocation} zoom={13} style={{ height: '400px', width: '100%' }}>
+        <Form.Item label="Address" required>
+          <Input value={formData.address} disabled />
+        </Form.Item>
+
+        <div style={{ height: '400px', marginBottom: '16px' }}>
+          <MapContainer center={userLocation} zoom={13} style={{ height: '100%', width: '100%' }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {markerPosition && <Marker position={markerPosition} />}
             <MapClickHandler />
           </MapContainer>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Rental Offer Price"
-            name="rentalOfferPrice"
-            value={formData.rentalOfferPrice}
-            onChange={(e) => setFormData({ ...formData, rentalOfferPrice: e.target.value })}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Sell Offer Price"
-            name="rentalOriginalPrice"
+        </div>
+
+        <Form.Item label="Purchase Category" required>
+          <Select
+            value={formData.purchaseCategory}
+            onChange={(value) => setFormData({ ...formData, purchaseCategory: value })}
+          >
+            <Option value="for Sale">For Sale</Option>
+            <Option value="for Rent">For Rent</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="House Price" required>
+          <Input
             value={formData.rentalOriginalPrice}
             onChange={(e) => setFormData({ ...formData, rentalOriginalPrice: e.target.value })}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
           />
-           
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Seller Name"
-            name="sellerName"
+        </Form.Item>
+
+        
+
+        <Form.Item label="Seller Name" required>
+          <Input
             value={formData.sellerName}
             onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Mobile Number"
-            name="mobileNumber"
+        </Form.Item>
+
+        <Form.Item label="Mobile Number" required>
+          <Input
             value={formData.mobileNumber}
             onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="House Area"
-            name="houseArea"
+        </Form.Item>
+
+        <Form.Item label="House Area" required>
+          <Input
             value={formData.houseArea}
             onChange={(e) => setFormData({ ...formData, houseArea: e.target.value })}
-            variant="outlined"
-            sx={{ marginBottom: 2 }}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="House Description"
-            name="description"
+        </Form.Item>
+
+        <Form.Item label="House Description" required>
+          <TextArea
+            rows={4}
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            variant="outlined"
-            multiline
-            rows={4}
-            sx={{ marginBottom: 2 }}
           />
+        </Form.Item>
 
-          {/* Dropdown for House Type */}
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="houseDropDown-label">House Type</InputLabel>
-            <Select
-              labelId="houseDropDown-label"
-              value={formData.houseDropDown}
-              onChange={(e) => setFormData({ ...formData, houseDropDown: e.target.value })}
-              label="House Type"
-              variant="outlined"
-              sx={{ marginBottom: 2 }}
-            >
-              <MenuItem value="apartment">Apartment</MenuItem>
-              <MenuItem value="villa">Villa</MenuItem>
-              <MenuItem value="house">House</MenuItem>
-            </Select>
-          </FormControl>
+        <Form.Item label="House Type" required>
+          <Select
+            value={formData.houseDropDown}
+            onChange={(value) => setFormData({ ...formData, houseDropDown: value })}
+          >
+            <Option value="apartment">Apartment</Option>
+            <Option value="villa">Villa</Option>
+            <Option value="house">House</Option>
+          </Select>
+        </Form.Item>
 
-          {/* Dropdown for Additional Option */}
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="dropdownOption-label">Additional Options</InputLabel>
-            <Select
-              labelId="dropdownOption-label"
-              value={formData.dropdownOption}
-              onChange={(e) => setFormData({ ...formData, dropdownOption: e.target.value })}
-              label="Additional Options"
-              variant="outlined"
-              sx={{ marginBottom: 2 }}
-            >
-              <MenuItem value="1BHK">1BHK</MenuItem>
-              <MenuItem value="2BHK">2BHK</MenuItem>
-              <MenuItem value="3BHK">3BHK</MenuItem>
-              <MenuItem value="1RK">1RK</MenuItem>
-            </Select>
-          </FormControl>
+        
 
-          {/* Image Capture */}
-          <Box {...getRootProps()} sx={{ border: '1px dashed', padding: 2, marginBottom: 2, cursor: 'pointer' }}>
-            <input {...getInputProps()} />
-            <Typography>Click here to upload images or drag and drop</Typography>
-          </Box>
-          <Box>
-            {formData.images.map((image, index) => (
-              <img key={index} src={image} alt={`preview ${index}`} style={{ width: '100px', marginRight: '8px', marginBottom: '8px' }} />
+        <Form.Item label="Additional Options" required>
+          <Select
+            value={formData.dropdownOption}
+            onChange={(value) => setFormData({ ...formData, dropdownOption: value })}
+          >
+            <Option value="1BHK">1BHK</Option>
+            <Option value="2BHK">2BHK</Option>
+            <Option value="3BHK">3BHK</Option>
+            <Option value="1RK">1RK</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Images" required>
+          <Upload
+            customRequest={handleFileUpload}
+            listType="picture-card"
+            multiple
+            showUploadList
+          >
+            <Button>Upload</Button>
+          </Upload>
+          <div style={{ marginTop: 16 }}>
+            {formData.images.map((img, index) => (
+              <img key={index} src={img} alt="house" style={{ width: 100, marginRight: 10 }} />
             ))}
-          </Box>
-
-          {/* Map Display */}
-          
-        </form>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="violet">Cancel</Button>
-        <Button onClick={handleSubmit} color="violet">Save</Button>
-      </DialogActions>
-    </Dialog>
+          </div>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 
